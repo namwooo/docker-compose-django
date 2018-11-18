@@ -1,8 +1,8 @@
 from django.urls import path
 
-from users.apis import login, check_permission
+from users.apis import CheckPermission, ObtainToken
 
 urlpatterns = [
-    path('api/login', login),
-    path('api/permission/<slug:permission_name>/', check_permission),
+    path('token/', ObtainToken.as_view()),
+    path('permission/<slug:permission_name>/', CheckPermission.as_view()),
 ]
