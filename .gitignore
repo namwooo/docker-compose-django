@@ -3,6 +3,8 @@ reated by https://www.gitignore.io/api/linux,macos,django,python,pycharm
 ### Custom ###
 .idea/
 .config_secret/
+log
+tmp
 
 ### Django ###
 *.log

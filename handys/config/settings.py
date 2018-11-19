@@ -27,7 +27,10 @@ SECRET_KEY = 'ih65v^8p#jodhl$s^#7t_$=$v$n%_11_ffw+z#nr0f$b^hss5w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    'handys.local.com'
+]
 
 # Application definition
 
