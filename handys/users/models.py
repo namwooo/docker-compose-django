@@ -87,8 +87,9 @@ class BasePermission(models.Model):
 
 
 class PermissionLevel1(BasePermission):
-    pass
+    user = models.ManyToManyField(User, blank=True, related_name='permission_level1')
 
 
 class PermissionLevel2(BasePermission):
-    parents = models.ManyToManyField(PermissionLevel1, blank=True)
+    user = models.ManyToManyField(User, blank=True, related_name='permission_level2')
+    parents = models.ManyToManyField(PermissionLevel1, blank=True, related_name='permission_level2')

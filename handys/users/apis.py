@@ -1,12 +1,11 @@
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
 from rest_framework.views import APIView
 
 from users.auths import TokenAuthentication
-from users.models import PermissionLevel1, PermissionLevel2
+from users.models import PermissionLevel1
 
 User = get_user_model()
 
@@ -42,17 +41,23 @@ class CheckPermission(APIView):
     * Requires token authentication
     """
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated, )
 
     def get(self, request, permission_name):
-        permission_lv1 = PermissionLevel1.objects.filter(name=permission_name)
-        permission_lv2 = PermissionLevel2.objects.filter(name=permission_name)
+        user = request.user
+        perm_l1 = user.permission_level1.filter(name=permission_name)
+        perm_l2 = user.permission_level2.filter(name=permission_name)
 
-        if permission_lv1 or permission_lv2:
+        perm_l1s = PermissionLevel1.objects.filter(user=request.user)
+        perm_l1_child = None
+        if perm_l1s:
+            for perm in perm_l1s:
+                perm_l1_child = perm.permission_level2.filter(name=permission_name)
+
+        if perm_l1 or perm_l1_child or perm_l2:
             return Response({"success": True,
                              "message": "The permission is available"},
                             status=HTTP_200_OK)
 
         return Response({"success": False,
-                         "message": "The permission does not exist"},
+                         "message": "The permission is not available"},
                         status=HTTP_404_NOT_FOUND)
