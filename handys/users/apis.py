@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_200_OK, HTTP_401_UNAUTHORIZED, \
+    HTTP_403_FORBIDDEN
 from rest_framework.views import APIView
 
 from users.auths import TokenAuthentication
@@ -40,9 +41,14 @@ class CheckPermission(APIView):
 
     * Requires token authentication
     """
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication, )
 
     def get(self, request, permission_name):
+        if not request.user.is_authenticated:
+            return Response({"success": False,
+                             "message": "The user is unauthorized"},
+                            status=HTTP_401_UNAUTHORIZED)
+
         user = request.user
         perm_l1 = user.permission_level1.filter(name=permission_name)
         perm_l2 = user.permission_level2.filter(name=permission_name)
@@ -60,4 +66,4 @@ class CheckPermission(APIView):
 
         return Response({"success": False,
                          "message": "The permission is not available"},
-                        status=HTTP_404_NOT_FOUND)
+                        status=HTTP_403_FORBIDDEN)
