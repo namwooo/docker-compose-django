@@ -23,7 +23,9 @@ RUN         ln -sf /etc/nginx/sites-available/app.conf \
                     /etc/nginx/sites-enabled/app.conf
 
 # uWSGI
-RUN         mkdir -p /srv/app/log/uwsgi
+RUN         mkdir -p /var/log/uwsgi/app
+RUN         mkdir -p /tmp/uwsgi
+
 
 # manage.py
 WORKDIR     /srv/app/handys
